@@ -4,8 +4,8 @@ conn = sqlite3.connect('transactions.db')
 
 c = conn.cursor()
 
-#c.execute("""CREATE TABLE transactions
-#(name text, sp real, date text)""")
+c.execute("""CREATE TABLE IF NOT EXISTS transactions
+(name text, sp real, date text)""")
 
 
 def addData(itemName, salePrice, date):
@@ -18,12 +18,14 @@ def addData(itemName, salePrice, date):
 def getData():
     c.execute("SELECT * FROM transactions")
     rows = c.fetchall()
-    #print("NAME/BARCODE/PURCHASE PRICE/SALE PRICE/QUANTITY")
+    # print("NAME/BARCODE/PURCHASE PRICE/SALE PRICE/QUANTITY")
 
     return list(rows)
+
 
 def deleteData():
     c.execute("DELETE FROM transactions")
     print("Data was deleted!")
+
 
 conn.commit()
