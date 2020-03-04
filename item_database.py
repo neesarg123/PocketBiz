@@ -4,8 +4,8 @@ conn = sqlite3.connect('items.db')
 
 c = conn.cursor()
 
-#c.execute("""CREATE TABLE items
-#(name text, barcode integer, pp real, sp real, qtn integer)""")
+c.execute("""CREATE TABLE IF NOT EXISTS items
+(name text, barcode integer, pp real, sp real, qtn integer)""")
 
 
 def addData(itemName, barcodeNumber, purchasePrice, salePrice, quantity):
@@ -18,7 +18,7 @@ def addData(itemName, barcodeNumber, purchasePrice, salePrice, quantity):
 def getData():
     c.execute("SELECT * FROM items")
     rows = c.fetchall()
-    #print("NAME/BARCODE/PURCHASE PRICE/SALE PRICE/QUANTITY")
+    # print("NAME/BARCODE/PURCHASE PRICE/SALE PRICE/QUANTITY")
 
     return list(rows)
 
@@ -35,6 +35,7 @@ def updateName(new_name, barcode_number):
         print("Item name was updated!")
     except:
         print("Sorry, did not find the item!")
+
 
 def updatePurchasePrice(new_pp, barcode_number):
     params = (new_pp, barcode_number)
@@ -65,6 +66,7 @@ def updateQuantity(new_qtn, barcode_number):
     except:
         print("Sorry, did not find the item!")
 
+
 def getSalePriceFromBarcode(barcode_number):
     param = (barcode_number,)
     try:
@@ -74,8 +76,9 @@ def getSalePriceFromBarcode(barcode_number):
     except:
         print("Sorry, did not find the item!")
 
+
 def getNameFromBarcode(barcode_number):
-    param= (barcode_number,)
+    param = (barcode_number,)
     try:
         name = c.execute("SELECT name FROM items WHERE barcode = (?)", param)
         final_name = name.fetchone()
@@ -83,14 +86,16 @@ def getNameFromBarcode(barcode_number):
     except:
         print("Sorry, did not find the item!")
 
+
 def getPPFromBarcode(barcode_number):
-    param= (barcode_number,)
+    param = (barcode_number,)
     try:
         pp = c.execute("SELECT pp FROM items WHERE barcode = (?)", param)
         final_pp = pp.fetchone()
         return str(final_pp[0])
     except:
         print("Sorry, did not find the item!")
+
 
 def getQtnFromBarcode(barcode_number):
     param = (barcode_number,)
@@ -101,10 +106,11 @@ def getQtnFromBarcode(barcode_number):
     except:
         print("Sorry, did not find the item!")
 
+
 def decreaseQuantityByOne(barcode_number):
     originalQtn = getQtnFromBarcode(barcode_number)
     newQtn = int(originalQtn) - 1
-    params= (newQtn, barcode_number)
+    params = (newQtn, barcode_number)
 
     try:
         c.execute("UPDATE items SET qtn = (?) WHERE barcode = (?)", params)
@@ -113,5 +119,6 @@ def decreaseQuantityByOne(barcode_number):
 
     except:
         print("Sorry, did not find the item!")
+
 
 conn.commit()
