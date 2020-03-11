@@ -796,7 +796,7 @@ class AnalysisPage(tk.Frame):
 
         # show sales frequency analysis button
         show_sale_frequency_analysis_btn = tk.Button(self, fg='#fffafa', bg=BACKGROUND_FRAME_COLOR, font=FONT,
-                                                     text='Show Month by Month Rev.',
+                                                     text='Show Top Selling Items',
                                                      command=lambda: show_sale_frequency_analysis(self))
         show_sale_frequency_analysis_btn.place(relx=0.55, rely=0.1, relheight=0.1, relwidth=0.4)
 
