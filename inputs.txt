@@ -1,0 +1,3 @@
+PRINTER_NAME = "POS-58"
+GOOGLE_INVENTORY_SHEET_NAME = "Liquor Palace Inventory"
+GOOGLE_TRANSACTIONS_SHEET_NAME = "Liquor Palace Transactions"
