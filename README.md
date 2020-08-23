@@ -12,7 +12,9 @@ The project idea was actually given by my dad who owns a liquor store himself. H
 5) Transactions UI allows the following windows: Return (to see how much you owe the customer when they give you a bill above their cost), Miscellaneous (to quickly add an item that you currently don't have in your inventory but know the price of), Discount (to add discount to a customer's total cost). Finally, there is a button to enter "Online/Offline" mode)
 6) Analysis page that allows user to see top 10 selling items and also month-by-month revenue
 # Using the Application
-- Clone the repository
+- Open terminal
+- Create a project directory: `mkdir whatever_name_you_want`
+- Clone the repository: `git clone https://github.com/neesarg123/InventoryApp.git`
 - Download required dependecies: `$ pip install -r requirements.txt`
 - Open "Inputs.txt" file, enter the asked information (printer name, google sheet file name, google worksheet name).
 - Run main.py: `$ python main.py` 
