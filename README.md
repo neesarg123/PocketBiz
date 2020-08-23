@@ -19,7 +19,7 @@ The project idea was actually given by my dad who owns a liquor store himself. H
 - Open "Inputs.txt" file, enter the asked information (printer name, google sheet file name, google worksheet name).
 - Run main.py: `$ python main.py` 
 ## Alternative
-- Click "Executable Version" Folder
+- Go here: https://mega.nz/folder/G7wR0RpC#yYsM3V6DlUWFmzhT4YpnEQ
 - Download the "App" folder as a zip
 - Extract the zip file
 - Open "Inputs.txt" file, enter the asked information (printer name, google sheet file name, google worksheet name).
