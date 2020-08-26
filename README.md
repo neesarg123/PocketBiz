@@ -20,7 +20,7 @@ The project idea was actually given by my dad who owns a liquor store himself. H
 - You can also add your inventory by clicking on "Inventory.xlsx" file in the directory and adding your store items. Alternatively, you can do this using the application, however, doing so in excel will likely be faster. 
 - Run main.py: `$ python main.py` 
 ## Alternative
-- Go here: https://mega.nz/folder/G7wR0RpC#yYsM3V6DlUWFmzhT4YpnEQ
+- Go here: https://mega.nz/folder/CmhxCICY#9re-Dlwt03QYoFpdhWHJQg
 - Download the "App" folder as a zip
 - Extract the zip file
 - Open "Inputs.txt" file, enter the asked information (printer name, google sheet file name, google worksheet name).
