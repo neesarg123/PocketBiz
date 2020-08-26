@@ -36,7 +36,8 @@ FONT = ('Courier', 15, 'bold')
 # --------------- PRELIMINARY SETUP --------------- #
 
 # globals
-global PRINTER_NAME, G_INV_SH_NAME, G_TRAN_SH_NAME, GC, SH, WKS, SH_T, WKS_T, ALL_TRANSACTIONS, INVENTORY_DF, ON_OFF_CYC
+global PRINTER_NAME, G_INV_SH_NAME, G_TRAN_SH_NAME, GC, SH, WKS, SH_T, WKS_T, COLUMNS_GOOGLE_INVENTORY, ALL_TRANSACTIONS
+global INVENTORY_DF, ON_OFF_CYC
 
 # read inputs text file
 input_file = open('inputs.txt', 'r')
@@ -47,8 +48,10 @@ for idx, line in enumerate(input_file.readlines()):
         PRINTER_NAME = value[2:-2]
     elif idx == 1:
         G_INV_SH_NAME = value[2:-2]
-    else:
+    elif idx == 2:
         G_TRAN_SH_NAME = value[2:-1]
+    else:
+        COLUMNS_GOOGLE_INVENTORY = value.split('[')[1].split(']')[0].split(', ')
 
 # authorize google sheets
 if os.path.isfile('creds.json'):
@@ -377,12 +380,10 @@ def done_btn_pressed(barcodes):
     if len(G_INV_SH_NAME) > 0 and len(G_TRAN_SH_NAME) > 0:
         inv_df = pd.read_excel('Inventory.xlsx')
 
-        # Don't want purchase price to be shown in the google sheets
+        # Don't want particular columns to be shown in the google sheets (user defined)
         new_invn = pd.DataFrame()
-        new_invn['Barcode'] = inv_df['Barcode']
-        new_invn['Name'] = inv_df['Name']
-        new_invn['Online_Price'] = inv_df['Online_Price']
-        new_invn['Quantity'] = inv_df['Quantity']
+        for col in COLUMNS_GOOGLE_INVENTORY:
+            new_invn[str(col)] = inv_df[str(col)]
 
         WKS.set_dataframe(new_invn, (1, 1))
 
