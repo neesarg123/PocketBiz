@@ -128,8 +128,14 @@ discount_added = []
 
 
 def update_all_transaction_df():
-    """will take in any modifications done to the excel file, and also add a tax column to it."""
-    new_all_transactions_df = pd.read_excel('Transactions.xlsx', ignore_index=True)
+    """will take in any modifications done to the database, and also help add a tax column to the excel file."""
+    all_transactions_data = {"Name": [names[0] for names in all_transactions_database.getNames()],
+                             "S.Price": [s_prices[0] for s_prices in all_transactions_database.getSPrices()],
+                             "Date": [dates[0] for dates in all_transactions_database.getDates()],
+                             "P.Type": [p_types[0] for p_types in all_transactions_database.getPTypes()],
+                             "Total": [tots[0] for tots in all_transactions_database.getTotals()]}
+
+    new_all_transactions_df = pd.DataFrame(data=all_transactions_data)
     new_all_transactions_df['Total'] = pd.to_numeric(new_all_transactions_df['Total'], errors='coerce')
 
     # adding taxes column to be added into the excel file
@@ -154,9 +160,22 @@ def update_all_transaction_df():
 
 
 def update_inventory_df():
-    """will take in any modifications done to the excel file"""
-    new_inventory_df = pd.read('Inventory.xlsx')
+    """will take in any modifications done to the database"""
+    inventory_data = {'Name': [names[0] for names in item_database.getNames()],
+                      'Barcode': [barcodes[0] for barcodes in item_database.getBarcodes()],
+                      'S.Price': [s_prices[0] for s_prices in item_database.getSPrices()],
+                      'P.Price': [p_prices[0] for p_prices in item_database.getPPrices()],
+                      'Quantity': [quantities[0] for quantities in item_database.getQtns()],
+                      'Online_Price': [ops[0] for ops in item_database.getOPs()],
+                      'Tax': [taxes[0] for taxes in item_database.getTaxes()]}
+    new_inventory_df = pd.DataFrame(data=inventory_data)
     return new_inventory_df
+
+
+def update_excel_files():
+    """updates the excel files for both data frames"""
+    update_inventory_df().to_excel('Inventory.xlsx', index=False)
+    update_all_transaction_df().to_excel('Transactions.xlsx', index=False)
 
 
 def erase_previous_entry(entries):
@@ -296,6 +315,9 @@ def print_receipt():
             )
         except Exception as e:
             print("Something went wrong when trying to print:", str(e))
+    else:
+        print("You don't have a usb-printer set up yet. If you have one, make sure to add its name in the input.txt "
+              "file. Or check whether you have the driver downloaded in your computer.")
 
 
 def print_option(barcodes):
@@ -315,13 +337,13 @@ def print_option(barcodes):
     yes_btn = tk.Button(root_tk_in, text='Yes', bg=YES_BTN, fg=FG_LABELS_COLOR, font=FONT,
                         command=lambda: [print_receipt(), root_tk_in.destroy(), done_btn_pressed(barcodes),
                                          update_inventory_df(),
-                                         update_all_transaction_df()])
+                                         update_all_transaction_df(), update_excel_files()])
     yes_btn.place(relx=0.2, rely=0.55, relheight=0.1, relwidth=0.2)
     # no button
     no_btn = tk.Button(root_tk_in, text='No', bg=NO_BTN, fg=FG_LABELS_COLOR, font=FONT,
                        command=lambda: [root_tk_in.destroy(), done_btn_pressed(barcodes),
                                         update_inventory_df(),
-                                        update_all_transaction_df()])
+                                        update_all_transaction_df(), update_excel_files()])
     no_btn.place(relx=0.6, rely=0.55, relheight=0.1, relwidth=0.2)
     no_btn.focus_force()
 
@@ -351,19 +373,21 @@ def done_btn_pressed(barcodes):
     barcodes.clear()
 
     transactions_database.deleteData()
-    inv_df = pd.read_excel('Inventory.xlsx')
 
-    # Don't want purchase price to be shown in the google sheets
-    new_invn = pd.DataFrame()
-    new_invn['Barcode'] = inv_df['Barcode']
-    new_invn['Name'] = inv_df['Name']
-    new_invn['S.Price'] = inv_df['S.Price']
-    new_invn['Quantity'] = inv_df['Quantity']
+    if len(G_INV_SH_NAME) > 0 and len(G_TRAN_SH_NAME) > 0:
+        inv_df = pd.read_excel('Inventory.xlsx')
 
-    WKS.set_dataframe(new_invn, (1, 1))
+        # Don't want purchase price to be shown in the google sheets
+        new_invn = pd.DataFrame()
+        new_invn['Barcode'] = inv_df['Barcode']
+        new_invn['Name'] = inv_df['Name']
+        new_invn['Online_Price'] = inv_df['Online_Price']
+        new_invn['Quantity'] = inv_df['Quantity']
 
-    trans_df = pd.read_excel("Transactions.xlsx")
-    WKS_T.set_dataframe(trans_df, (1, 1))
+        WKS.set_dataframe(new_invn, (1, 1))
+
+        trans_df = pd.read_excel("Transactions.xlsx")
+        WKS_T.set_dataframe(trans_df, (1, 1))
 
     # clear the receipt file for next transaction
     open(filename, 'w').write('')
@@ -823,7 +847,7 @@ class MainPage(tk.Frame):
         analysis_frame.place(relx=0.25, rely=0.7, relheight=0.15, relwidth=0.5)
         analysis_btn = tk.Button(analysis_frame, text='Show Analysis', bg=BUTTON_AND_LABEL_COLOR,
                                  font=FONT, command=lambda: [update_all_transaction_df(), update_inventory_df(),
-                                                             controller.show_frame(AnalysisPage)])
+                                                             update_excel_files(), controller.show_frame(AnalysisPage)])
         analysis_btn.place(relx=0.25, rely=0.2, relheight=0.5, relwidth=0.5)
 
     def post_update(self):
@@ -942,7 +966,7 @@ class AddInventoryPage(tk.Frame):
             add_item_to_item_database(name_entry.get(), int(barcode_entry.get()), pp_entry.get(),
                                       sp_entry.get(), int(qtn_entry.get()), online_entry.get(), v.get(), self.text),
             erase_previous_entry([name_entry, barcode_entry, sp_entry, pp_entry, qtn_entry, online_entry]),
-            update_all_transaction_df(), update_inventory_df()])
+            update_all_transaction_df(), update_inventory_df(), update_excel_files()])
         add_item_btn.place(relx=0.45, rely=0.8, relheight=0.1, relwidth=0.1)
 
         # Add Back Button
@@ -1184,6 +1208,7 @@ class TransactionPage(tk.Frame):
         back_btn.place(relx=0.5, rely=0.9, relheight=0.05, relwidth=0.1)
 
     def post_update(self):
+        delete_pressed(self.tb_frame, self.tb_frame_1)
         self.barcodeEntry.focus_force()
 
 
