@@ -25,7 +25,7 @@ def getData():
 
 # fetching only names from database
 def getNames():
-    c.execute("SELECT name FROM items")
+    c.execute("Select from items")
     rows = c.fetchall()
     return list(rows)
 
